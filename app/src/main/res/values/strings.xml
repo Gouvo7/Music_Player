@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Music Player</string>
+    <string name="select_song">Επιλογη αρχειων</string>
+    <string name="text1">Text1</string>
+    <string name="text2">Text2</string>
+    <string name="next_track">Next Track</string>
+    <string name="previous_track">Previous Track</string>
+    <string name="play_track">Play Track</string>
+    <string name="pause_track">Pause Track</string>
+</resources>
