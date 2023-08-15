@@ -1,5 +1,6 @@
 package com.gouvo.musicplayer;
-
+import android.provider.MediaStore;
+import android.database.Cursor;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -31,7 +32,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button clearButton;
     private ActivityResultLauncher<Intent> fileSelectorLauncher;
     private List<String> loadedFiles = new ArrayList<>();
+    ArrayList<Song> songList = new ArrayList<>();
+
     private static final int PERMISSION_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +89,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 loadedFiles.clear();
             }
         });
+        String[] songData = {
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DURATION
+        };
+
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        // gets all audio related files
+        // for each file content resolver gets audio file data based on sondData array(path, title and duration)
+        Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songData, selection, null, null);
+
+        while(cursor.moveToNext()) {
+            Song song = new Song(cursor.getString(0), cursor.getString(1), cursor.getString(2));
+            if(new File(song.getPath()).exists())
+                songList.add(song);
+        }
     }
+
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -97,6 +118,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+    /*
+    private void loadFileWithThumbnail(Uri uri) {
+        String filePath = uri.getPath();
+        File file = new File(filePath);
+        String fileName = file.getName();
+        if (loadedFiles.contains(fileName)) {
+            return;
+        }
+
+        loadedFiles.add(file.getName());
+        Bitmap thumbnailBitmap = coverpicture(filePath);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        TextView textView = new TextView(this);
+        textView.setText(fileName);
+
+        ImageView imageView = new ImageView(this);
+        if (thumbnailBitmap != null) {
+            imageView.setImageBitmap(thumbnailBitmap);
+        } else {
+            //imageView.setImageResource(R.drawable.ic_launcher_background); // Set a default image if thumbnail is not available
+        }
+
+        linearLayout.addView(textView);
+        linearLayout.addView(imageView);
+
+        LinearLayout imageContainer = findViewById(R.id.image_container);
+        imageContainer.addView(linearLayout);
+    }
+    */
 
     private void loadFileWithThumbnail(Uri uri) {
         String filePath = uri.getPath();
@@ -118,6 +173,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ImageView imageView = new ImageView(this);
         imageView.setImageBitmap(img);
+
+        if (img != null) {
+            imageView.setImageBitmap(img);
+        } else {
+            imageView.setImageResource(R.drawable.default_thumbnail); // Set a default image if thumbnail is not available
+        }
 
         linearLayout.addView(textView);
         linearLayout.addView(imageView);
