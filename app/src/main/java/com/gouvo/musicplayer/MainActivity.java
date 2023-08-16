@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     } else {
                         Uri uri = data.getData();
+
                         loadFileWithThumbnail(uri);
                     }
                 }
