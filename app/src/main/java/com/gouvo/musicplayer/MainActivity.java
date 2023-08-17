@@ -4,29 +4,18 @@ import android.provider.MediaStore;
 import android.database.Cursor;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.widget.Button;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Bundle;
-import android.content.ClipData;
-import android.net.Uri;
-import android.widget.LinearLayout;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
     }
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

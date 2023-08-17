@@ -1,6 +1,8 @@
 package com.gouvo.musicplayer;
 
-public class Song {
+import java.io.Serializable;
+
+public class Song implements Serializable {
     String path;
     String title;
     String duration;

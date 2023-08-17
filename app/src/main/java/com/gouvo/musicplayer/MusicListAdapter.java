@@ -1,13 +1,13 @@
 package com.gouvo.musicplayer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -32,6 +32,18 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         Song songData = songlist.get(position);
         holder.titleTextView.setText(songData.getTitle());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { // initialize the media player Activity
+                MyMediaPlayer.getInstance().reset();
+                MyMediaPlayer.currIndex = position;
+                Intent intent = new Intent(context, MediaPlayerActivity.class);
+                intent.putExtra("LIST",songlist);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
