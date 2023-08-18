@@ -2,13 +2,19 @@ package com.gouvo.musicplayer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -20,12 +26,17 @@ public class MediaPlayerActivity extends AppCompatActivity {
     ImageView pausePlayBtn,nextBtn,prevBtn,songIcon;
     ArrayList<Song> songList;
     Song currentSong;
-    MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
+    MediaPlayer mediaPlayer;
+
+    TextView nowPlayingTextView;
+    ImageButton prev;
+    ImageButton next;
+    ImageButton pause;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player);
-
+        mediaPlayer = MyMediaPlayer.getInstance();
         titleView = findViewById(R.id.song_title);
         currentTimeView = findViewById(R.id.current_time);
         totalTimeView = findViewById(R.id.total_time);
@@ -34,9 +45,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         nextBtn = findViewById(R.id.next_track);
         prevBtn = findViewById(R.id.previous_track);
         songIcon = findViewById(R.id.curr_song_icon);
-
         songList = (ArrayList<Song>) getIntent().getSerializableExtra("LIST");
-
         setResources();
 
         MediaPlayerActivity.this.runOnUiThread(new Runnable() {
@@ -47,9 +56,9 @@ public class MediaPlayerActivity extends AppCompatActivity {
                     currentTimeView.setText(StrToTime(mediaPlayer.getCurrentPosition()+""));
                 }
                 if (mediaPlayer.isPlaying())
-                    pausePlayBtn.setImageResource(R.drawable.pause_icon);
+                    pausePlayBtn.setImageResource(R.drawable.pause_song_icon);
                 else
-                    pausePlayBtn.setImageResource(R.drawable.play_icon);
+                    pausePlayBtn.setImageResource(R.drawable.play_song_icon);
                 new Handler().postDelayed(this,100);
             }
         });
@@ -92,6 +101,12 @@ public class MediaPlayerActivity extends AppCompatActivity {
             mediaPlayer.start();
             seekbar.setProgress(0);
             seekbar.setMax(mediaPlayer.getDuration());
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    playNext();
+                }
+            });
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,6 +128,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
             MyMediaPlayer.currIndex -= 1;
         mediaPlayer.reset();
         setResources();
+
     }
 
     private void pausePlay(){
