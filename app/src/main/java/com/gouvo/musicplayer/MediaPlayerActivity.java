@@ -1,16 +1,23 @@
 package com.gouvo.musicplayer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -21,9 +28,9 @@ import java.util.concurrent.TimeUnit;
 
 public class MediaPlayerActivity extends AppCompatActivity {
 
-    TextView titleView,currentTimeView,totalTimeView;
+    TextView titleView, currentTimeView, totalTimeView;
     SeekBar seekbar;
-    ImageView pausePlayBtn,nextBtn,prevBtn,songIcon;
+    ImageView pausePlayBtn, nextBtn, prevBtn, songIcon;
     ArrayList<Song> songList;
     Song currentSong;
     MediaPlayer mediaPlayer;
@@ -32,6 +39,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     ImageButton prev;
     ImageButton next;
     ImageButton pause;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,22 +59,22 @@ public class MediaPlayerActivity extends AppCompatActivity {
         MediaPlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mediaPlayer!=null){
+                if (mediaPlayer != null) {
                     seekbar.setProgress(mediaPlayer.getCurrentPosition());
-                    currentTimeView.setText(StrToTime(mediaPlayer.getCurrentPosition()+""));
+                    currentTimeView.setText(StrToTime(mediaPlayer.getCurrentPosition() + ""));
                 }
                 if (mediaPlayer.isPlaying())
                     pausePlayBtn.setImageResource(R.drawable.pause_song_icon);
                 else
                     pausePlayBtn.setImageResource(R.drawable.play_song_icon);
-                new Handler().postDelayed(this,100);
+                new Handler().postDelayed(this, 100);
             }
         });
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if(mediaPlayer!=null && b)
+                if (mediaPlayer != null && b)
                     mediaPlayer.seekTo(i);
             }
 

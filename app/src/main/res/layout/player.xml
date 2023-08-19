@@ -110,17 +110,6 @@
                 android:backgroundTint="@color/custom_btn"
                 />
 
-            <com.gauravk.audiovisualizer.visualizer.BlastVisualizer
-                xmlns:custom="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/blast"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_alignParentBottom="true"
-                custom:avDensity="0.8"
-                custom:avType="fill"
-                custom:avColor="@color/av_dark_blue"
-                custom:avSpeed="normal"/>
-
         </RelativeLayout>
 
     </RelativeLayout>
