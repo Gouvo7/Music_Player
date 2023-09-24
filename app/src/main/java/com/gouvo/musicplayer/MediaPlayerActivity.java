@@ -56,6 +56,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         songList = (ArrayList<Song>) getIntent().getSerializableExtra("LIST");
         setResources();
 
+
         MediaPlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -90,6 +91,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         });
     }
 
+
     void setResources(){
         currentSong = songList.get(MyMediaPlayer.currIndex);
         titleView.setText(currentSong.getTitle());
@@ -101,7 +103,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         startMusic();
     }
 
-    private void startMusic(){
+    public void startMusic(){
         try {
             mediaPlayer.reset();
             mediaPlayer.setDataSource(currentSong.path);
@@ -120,7 +122,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         }
     }
 
-    private void playNext() {
+    public void playNext() {
         if (MyMediaPlayer.currIndex == songList.size() - 1)
             MyMediaPlayer.currIndex = 0;
         else
@@ -129,7 +131,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
         setResources();
     }
 
-    private void playPrev(){
+    public void playPrev(){
         if (MyMediaPlayer.currIndex == 0)
             MyMediaPlayer.currIndex = songList.size() -1;
         else
