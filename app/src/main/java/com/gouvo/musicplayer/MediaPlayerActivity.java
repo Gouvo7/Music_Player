@@ -15,6 +15,8 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
@@ -40,6 +42,8 @@ public class MediaPlayerActivity extends AppCompatActivity {
     ImageButton next;
     ImageButton pause;
 
+    private TelephonyManager telephonyManager;
+    private PhoneStateListener phoneStateListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +60,29 @@ public class MediaPlayerActivity extends AppCompatActivity {
         songList = (ArrayList<Song>) getIntent().getSerializableExtra("LIST");
         setResources();
 
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        phoneStateListener = new PhoneStateListener() {
+            @Override
+            public void onCallStateChanged(int state, String incomingNumber) {
+                super.onCallStateChanged(state, incomingNumber);
+
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_RINGING:
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                        // Pause the music when the phone is ringing or during a call
+                        pauseMusic();
+                        break;
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        // Resume the music when the call ends
+                        resumeMusic();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
         MediaPlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
@@ -90,7 +117,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
             }
         });
     }
-
 
     void setResources(){
         currentSong = songList.get(MyMediaPlayer.currIndex);
@@ -148,11 +174,49 @@ public class MediaPlayerActivity extends AppCompatActivity {
             mediaPlayer.start();
     }
 
+    private void pauseMusic() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    private void resumeMusic() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
+    }
+
     public static String StrToTime(String duration){
         Long mill = Long.parseLong(duration);
         String tmp = String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(mill) % TimeUnit.HOURS.toMinutes(1),
                 TimeUnit.MILLISECONDS.toSeconds(mill) % TimeUnit.MINUTES.toSeconds(1));
         return tmp;
+    }
+
+    private PhoneStateListener mPhoneListener = new PhoneStateListener() {
+        public void onCallStateChanged(int state, String incomingNumber) {
+            try {
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        pausePlay();
+                        break;
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                        break;
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        pausePlay();
+                        break;
+                    default:
+                }
+            } catch (Exception e) {
+            }
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the phone state listener when the activity is destroyed
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
     }
 }
